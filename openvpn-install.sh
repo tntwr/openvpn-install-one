@@ -175,13 +175,13 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		ip6=$(ip -6 addr | grep 'inet6 [23]' | cut -d '/' -f 1 | grep -oE '([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}' | sed -n "$ip6_number"p)
 	fi
 	echo
-	echo "请选择 "${yellow}"OpenVPN"${none}" 传输协议"
+	echo -e "请选择 "${yellow}"OpenVPN"${none}" 传输协议"
 	echo "   1) UDP (推荐)"
 	echo "   2) TCP"
-	read -p "请选择协议 [${magenta}1-2 ${none}]: " protocol
+	read -e -p "请选择协议 [${magenta}1-2 ${none}]: " protocol
 	until [[ -z "$protocol" || "$protocol" =~ ^[12]$ ]]; do
 		echo "$protocol: 无效的选择."
-		read -p "请再选择协议 [${magenta}1-2 ${none}]: " protocol
+		read -e -p "请再选择协议 [${magenta}1-2 ${none}]: " protocol
 	done
 	case "$protocol" in
 		1|"") 
@@ -192,7 +192,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		;;
 	esac
 	echo
-	echo "请输入 "${yellow}"OpenVPN"${none}" 端口 ["${magenta}"1-65535"${none}"]"
+	echo -e "请输入 "${yellow}"OpenVPN"${none}" 端口 ["${magenta}"1-65535"${none}"]"
 	read -p "默认端口： [1194]: " port
 	until [[ -z "$port" || "$port" =~ ^[0-9]+$ && "$port" -le 65535 ]]; do
 		echo "$port: 无效的端口"
@@ -207,10 +207,10 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	echo "   4) OpenDNS"
 	echo "   5) Quad9"
 	echo "   6) AdGuard"
-	read -p "DNS 服务器 [${magenta}1-6${none}]: " dns
+	read -e -p "DNS 服务器 [${magenta}1-6${none}]: " dns
 	until [[ -z "$dns" || "$dns" =~ ^[1-6]$ ]]; do
 		echo "$dns: 无效的选择"
-		read -p "DNS 服务器 [${magenta}1-6${none}]: " dns
+		read -e -p "DNS 服务器 [${magenta}1-6${none}]: " dns
 	done
 	echo
 	echo "给这个配置文件起个名字, 例如：dibian-udp"
@@ -529,7 +529,7 @@ else
 		;;
 		3)
 			echo
-			read -p "Confirm OpenVPN removal? [y/N]: " remove
+			read -p "确认卸载 OpenVPN 吗? [y/N]: " remove
 			until [[ "$remove" =~ ^[yYnN]*$ ]]; do
 				echo "$remove: invalid selection."
 				read -p "Confirm OpenVPN removal? [y/N]: " remove
