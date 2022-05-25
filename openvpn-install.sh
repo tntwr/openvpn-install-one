@@ -175,13 +175,13 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		ip6=$(ip -6 addr | grep 'inet6 [23]' | cut -d '/' -f 1 | grep -oE '([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}' | sed -n "$ip6_number"p)
 	fi
 	echo
-	echo "请选择 "$yellow"OpenVPN"$none" 传输协议"
+	echo "请选择 "${yellow}"OpenVPN"${none}" 传输协议"
 	echo "   1) UDP (推荐)"
 	echo "   2) TCP"
-	read -p "协议 [1]: " protocol
+	read -p "请选择协议 [${magenta}1-2 ${none}]: " protocol
 	until [[ -z "$protocol" || "$protocol" =~ ^[12]$ ]]; do
 		echo "$protocol: 无效的选择."
-		read -p "协议 [1]: " protocol
+		read -p "请再选择协议 [${magenta}1-2 ${none}]: " protocol
 	done
 	case "$protocol" in
 		1|"") 
@@ -192,29 +192,29 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		;;
 	esac
 	echo
-	echo "请输入 "$yellow"OpenVPN"$none" 端口 ["$magenta"1-65535"$none"]"
+	echo "请输入 "${yellow}"OpenVPN"${none}" 端口 ["${magenta}"1-65535"${none}"]"
 	read -p "默认端口： [1194]: " port
 	until [[ -z "$port" || "$port" =~ ^[0-9]+$ && "$port" -le 65535 ]]; do
 		echo "$port: 无效的端口"
-		read -p "默认端口： [1194]: " port
+		read -p "请输入端口： [1194]: " port
 	done
 	[[ -z "$port" ]] && port="1194"
 	echo
 	echo "请为这个 OpenVPN 选择一个 DNS 服务器:"
-	echo "   1) 自适应"
+	echo "   1) 当前的系统解析方式"
 	echo "   2) Google"
 	echo "   3) 1.1.1.1"
 	echo "   4) OpenDNS"
 	echo "   5) Quad9"
 	echo "   6) AdGuard"
-	read -p "DNS 服务器 [1]: " dns
+	read -p "DNS 服务器 [${magenta}1-6${none}]: " dns
 	until [[ -z "$dns" || "$dns" =~ ^[1-6]$ ]]; do
 		echo "$dns: 无效的选择"
-		read -p "DNS 服务器 [1]: " dns
+		read -p "DNS 服务器 [${magenta}1-6${none}]: " dns
 	done
 	echo
-	echo "给这个配置文件起个名字:【dibian-ucp】"
-	read -p "名字 [client]: " unsanitized_client
+	echo "给这个配置文件起个名字, 例如：dibian-udp"
+	read -p "名字: " unsanitized_client
 	# Allow a limited set of characters to avoid conflicts
 	client=$(sed 's/[^0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]/_/g' <<< "$unsanitized_client")
 	[[ -z "$client" ]] && client="client"
@@ -232,7 +232,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 			firewall="iptables"
 		fi
 	fi
-	read -n1 -r -p "Press any key to continue..."
+	read -n1 -r -p "按下任何键开始安装，中间有升级弹窗默认即可..."
 	# If running inside a container, disable LimitNPROC to prevent conflicts
 	if systemd-detect-virt -cq; then
 		mkdir /etc/systemd/system/openvpn-server@server.service.d/ 2>/dev/null
@@ -452,21 +452,21 @@ verb 3" > /etc/openvpn/server/client-common.txt
 	echo "完成!"
 	echo
 	echo "代理文件存放在:" ~/"$client.ovpn"
-	echo "试试 cat 他，复制到本地 windows 系统, 保存为.ovpn 文件，导入到 OpenVPN.exe 吗:"
-	echo "再次运行这个 .sh 脚本可以重新设置 OpenVPN: bash openvpn-install.sh"
+	echo "试试 cat 他，复制到本地 windows 系统, 保存为.ovpn 文件，导入到 OpenVPN.exe 吗?"
+	echo "再次运行这个脚本可以重新设置 OpenVPN: bash openvpn-install.sh"
 else
 	clear
-	echo "OpenVPN is already installed."
+	echo "OpenVPN 已经安装过了"
 	echo
-	echo "Select an option:"
-	echo "   1) Add a new client"
-	echo "   2) Revoke an existing client"
-	echo "   3) Remove OpenVPN"
-	echo "   4) Exit"
-	read -p "Option: " option
+	echo "选择一个管理命令:"
+	echo "   1) 添加一个新代理"
+	echo "   2) 修改目前的代理"
+	echo "   3) 卸载 OpenVPN"
+	echo "   4) 退出"
+	read -p "你的选择是: " option
 	until [[ "$option" =~ ^[1-4]$ ]]; do
-		echo "$option: invalid selection."
-		read -p "Option: " option
+		echo "$option: 无效的"
+		read -p "选择是啥: " option
 	done
 	case "$option" in
 		1)
