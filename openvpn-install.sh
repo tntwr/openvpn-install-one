@@ -178,10 +178,10 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	echo -e "请选择 "${yellow}"OpenVPN"${none}" 传输协议"
 	echo "   1) UDP (推荐)"
 	echo "   2) TCP"
-	read -p "$(echo -e "请选择协议 [${magenta}1-2 ${none}]: " protocol
+	read -p "请选择协议 [1-2]: " protocol
 	until [[ -z "$protocol" || "$protocol" =~ ^[12]$ ]]; do
 		echo "$protocol: 无效的选择."
-		read -p "$(echo -e "请选择协议 [${magenta}1-2 ${none}]: " protocol
+		read -p "请选择协议 [1-2]: " protocol
 	done
 	case "$protocol" in
 		1|"") 
@@ -207,10 +207,10 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	echo "   4) OpenDNS"
 	echo "   5) Quad9"
 	echo "   6) AdGuard"
-	read -p "$(echo -e "请选择协议DNS 服务器 [${magenta}1-6${none}]: " dns
+	read -p "请选择 DNS 服务器 [1-6:]" dns
 	until [[ -z "$dns" || "$dns" =~ ^[1-6]$ ]]; do
 		echo "$dns: 无效的选择"
-		read -e -p "DNS 服务器 [${magenta}1-6${none}]: " dns
+		read -p "DNS 服务器 [1-6]: " dns
 	done
 	echo
 	echo "给这个配置文件起个名字, 例如:dibian-udp。默认: opvn_client"
