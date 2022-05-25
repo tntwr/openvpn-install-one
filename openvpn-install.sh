@@ -178,10 +178,10 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	echo -e "请选择 "${yellow}"OpenVPN"${none}" 传输协议"
 	echo "   1) UDP (推荐)"
 	echo "   2) TCP"
-	read -e -p "请选择协议 [${magenta}1-2 ${none}]: " protocol
+	read -p "$(echo -e "请选择协议 [${magenta}1-2 ${none}]: " protocol
 	until [[ -z "$protocol" || "$protocol" =~ ^[12]$ ]]; do
 		echo "$protocol: 无效的选择."
-		read -e -p "请再选择协议 [${magenta}1-2 ${none}]: " protocol
+		read -p "$(echo -e "请选择协议 [${magenta}1-2 ${none}]: " protocol
 	done
 	case "$protocol" in
 		1|"") 
@@ -207,17 +207,17 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 	echo "   4) OpenDNS"
 	echo "   5) Quad9"
 	echo "   6) AdGuard"
-	read -e -p "DNS 服务器 [${magenta}1-6${none}]: " dns
+	read -p "$(echo -e "请选择协议DNS 服务器 [${magenta}1-6${none}]: " dns
 	until [[ -z "$dns" || "$dns" =~ ^[1-6]$ ]]; do
 		echo "$dns: 无效的选择"
 		read -e -p "DNS 服务器 [${magenta}1-6${none}]: " dns
 	done
 	echo
-	echo "给这个配置文件起个名字, 例如：dibian-udp"
+	echo "给这个配置文件起个名字, 例如:dibian-udp。默认: opvn_client"
 	read -p "名字: " unsanitized_client
 	# Allow a limited set of characters to avoid conflicts
 	client=$(sed 's/[^0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]/_/g' <<< "$unsanitized_client")
-	[[ -z "$client" ]] && client="client"
+	[[ -z "$client" ]] && client="opvn_client"
 	echo
 	echo "OpenVPN 安装程序已经就绪"
 	# Install a firewall if firewalld or iptables are not already available
@@ -452,7 +452,7 @@ verb 3" > /etc/openvpn/server/client-common.txt
 	echo "完成!"
 	echo
 	echo "代理文件存放在:" ~/"$client.ovpn"
-	echo "试试 cat 他，复制到本地 windows 系统, 保存为.ovpn 文件，导入到 OpenVPN.exe 吗?"
+	echo "试试 cat "~/"$client.ovpn" "，复制到本地 windows 系统, 保存为.ovpn 文件，导入到 OpenVPN.exe 吗?"
 	echo "再次运行这个脚本可以重新设置 OpenVPN: bash openvpn-install.sh"
 else
 	clear
@@ -572,7 +572,7 @@ else
 					rm -rf /etc/openvpn/server
 				fi
 				echo
-				echo "OpenVPN removed!"
+				echo "OpenVPN 卸载完成!"
 			else
 				echo
 				echo "OpenVPN removal aborted!"
