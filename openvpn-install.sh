@@ -5,6 +5,24 @@
 # Copyright (c) 2013 Nyr. Released under the MIT License.
 
 
+# highlight word
+red='\e[91m'
+green='\e[92m'
+yellow='\e[93m'
+magenta='\e[95m'
+cyan='\e[96m'
+none='\e[0m'
+
+
+
+
+# Detect root
+[[ $(id -u) != 0 ]] && echo -e " 哎呀……请使用 ${red} root ${none}用户, 或者 sudo 前缀运行 ${yellow}~(^_^) ${none}" && exit
+
+
+
+
+
 # Detect Debian users running the script with "sh" instead of bash
 if readlink /proc/$$/exe | grep -q "dash"; then
 	echo 'This installer needs to be run with "bash", not "sh".'
@@ -107,7 +125,7 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		apt-get install -y wget
 	fi
 	clear
-	echo 'Welcome to this OpenVPN road warrior installer!'
+	echo '欢迎来到 OpenVPN 一键安装脚本（未翻译完全版）!'
 	# If system has a single IPv4, it is selected automatically. Else, ask the user
 	if [[ $(ip -4 addr | grep inet | grep -vEc '127(\.[0-9]{1,3}){3}') -eq 1 ]]; then
 		ip=$(ip -4 addr | grep inet | grep -vE '127(\.[0-9]{1,3}){3}' | cut -d '/' -f 1 | grep -oE '[0-9]{1,3}(\.[0-9]{1,3}){3}')
@@ -157,13 +175,13 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		ip6=$(ip -6 addr | grep 'inet6 [23]' | cut -d '/' -f 1 | grep -oE '([0-9a-fA-F]{0,4}:){1,7}[0-9a-fA-F]{0,4}' | sed -n "$ip6_number"p)
 	fi
 	echo
-	echo "Which protocol should OpenVPN use?"
-	echo "   1) UDP (recommended)"
+	echo "请选择 "$yellow"OpenVPN"$none" 传输协议"
+	echo "   1) UDP (推荐)"
 	echo "   2) TCP"
-	read -p "Protocol [1]: " protocol
+	read -p "协议 [1]: " protocol
 	until [[ -z "$protocol" || "$protocol" =~ ^[12]$ ]]; do
-		echo "$protocol: invalid selection."
-		read -p "Protocol [1]: " protocol
+		echo "$protocol: 无效的选择."
+		read -p "协议 [1]: " protocol
 	done
 	case "$protocol" in
 		1|"") 
@@ -174,34 +192,34 @@ if [[ ! -e /etc/openvpn/server/server.conf ]]; then
 		;;
 	esac
 	echo
-	echo "What port should OpenVPN listen to?"
-	read -p "Port [1194]: " port
+	echo "请输入 "$yellow"OpenVPN"$none" 端口 ["$magenta"1-65535"$none"]"
+	read -p "默认端口： [1194]: " port
 	until [[ -z "$port" || "$port" =~ ^[0-9]+$ && "$port" -le 65535 ]]; do
-		echo "$port: invalid port."
-		read -p "Port [1194]: " port
+		echo "$port: 无效的端口"
+		read -p "默认端口： [1194]: " port
 	done
 	[[ -z "$port" ]] && port="1194"
 	echo
-	echo "Select a DNS server for the clients:"
-	echo "   1) Current system resolvers"
+	echo "请为这个 OpenVPN 选择一个 DNS 服务器:"
+	echo "   1) 自适应"
 	echo "   2) Google"
 	echo "   3) 1.1.1.1"
 	echo "   4) OpenDNS"
 	echo "   5) Quad9"
 	echo "   6) AdGuard"
-	read -p "DNS server [1]: " dns
+	read -p "DNS 服务器 [1]: " dns
 	until [[ -z "$dns" || "$dns" =~ ^[1-6]$ ]]; do
-		echo "$dns: invalid selection."
-		read -p "DNS server [1]: " dns
+		echo "$dns: 无效的选择"
+		read -p "DNS 服务器 [1]: " dns
 	done
 	echo
-	echo "Enter a name for the first client:"
-	read -p "Name [client]: " unsanitized_client
+	echo "给这个配置文件起个名字:【dibian-ucp】"
+	read -p "名字 [client]: " unsanitized_client
 	# Allow a limited set of characters to avoid conflicts
 	client=$(sed 's/[^0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-]/_/g' <<< "$unsanitized_client")
 	[[ -z "$client" ]] && client="client"
 	echo
-	echo "OpenVPN installation is ready to begin."
+	echo "OpenVPN 安装程序已经就绪"
 	# Install a firewall if firewalld or iptables are not already available
 	if ! systemctl is-active --quiet firewalld.service && ! hash iptables 2>/dev/null; then
 		if [[ "$os" == "centos" || "$os" == "fedora" ]]; then
@@ -431,10 +449,11 @@ verb 3" > /etc/openvpn/server/client-common.txt
 	# Generates the custom client.ovpn
 	new_client
 	echo
-	echo "Finished!"
+	echo "完成!"
 	echo
-	echo "The client configuration is available in:" ~/"$client.ovpn"
-	echo "New clients can be added by running this script again."
+	echo "代理文件存放在:" ~/"$client.ovpn"
+	echo "试试 cat 他，复制到本地 windows 系统, 保存为.ovpn 文件，导入到 OpenVPN.exe 吗:"
+	echo "再次运行这个 .sh 脚本可以重新设置 OpenVPN: bash openvpn-install.sh"
 else
 	clear
 	echo "OpenVPN is already installed."
